@@ -1,16 +1,16 @@
-from flask import Flask, jsonify
+import pytest
+from app import app
 
-app = Flask(__name__)
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    with app.test_client() as client:
+        yield client
 
-@app.route("/")
-def home():
-    return jsonify(message="Welcome to the Home Page"), 200
+def test_home_page(client):
+    response = client.get("/")
+    assert response.status_code == 200
 
-
-@app.errorhandler(404)
-def page_not_found(e):
-    return jsonify(error="Page not found"), 404
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+def test_404_page(client):
+    response = client.get("/non-existent")
+    assert response.status_code == 404

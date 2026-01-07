@@ -1,14 +1,14 @@
-from flask import Flask, render_template
+from flask import Flask, jsonify
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return jsonify(message="Welcome to the Home Page"), 200
 
-if __name__ == '__main__':
-    host = '127.0.0.1'
-    port = 5000
-    print(f"Starting server at http://{host}:{port}")
-    print(f"Starting server at http://{host}:{port}")
-    app.run(host=host, port=port, debug=True)
+@app.errorhandler(404)
+def page_not_found(e):
+    return jsonify(error="Page not found"), 404
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
